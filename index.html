@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasty Burger Point</title>
+    
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .navbar { background: #333; color: white; padding: 15px; text-align: center; }
+        .container { max-width: 500px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .card { background: #eee; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+        input, button { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { background: #e67e22; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background: #d35400; }
+        .total-bill { font-weight: bold; font-size: 1.2em; text-align: right; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">Tasty Burger Point</div>
+
+    <div class="container">
+        <h2>Menu</h2>
+        <div class="card">Classic Burger - 500 PKR</div>
+        
+        <h3>Place Your Order</h3>
+        <form id="order-form">
+            <input type="text" name="user_name" placeholder="Name" required>
+            <input type="text" name="user_phone" placeholder="Phone Number" required>
+            <input type="text" name="user_address" placeholder="Address" required>
+            
+            <label>Quantity:</label>
+            <input type="number" id="qty" name="quantity" value="1" min="1" oninput="calculateTotal()">
+            
+            <input type="hidden" name="total_price" id="total_hidden" value="500">
+            <div class="total-bill">Total: <span id="total-display">500</span> PKR</div>
+            
+            <button type="submit" id="button">Order Place Karein</button>
+        </form>
+    </div>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        // 1. Apni IDs yahan dalo
+        emailjs.init('YOUR_PUBLIC_KEY'); 
+
+        function calculateTotal() {
+            let price = 500;
+            let qty = document.getElementById('qty').value;
+            let total = qty * price;
+            document.getElementById('total-display').innerText = total;
+            document.getElementById('total_hidden').value = total;
+        }
+
+        const btn = document.getElementById('button');
+        document.getElementById('order-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            btn.innerText = 'Sending...';
+
+            // 2. Apni Service/Template IDs yahan dalo
+            emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', this)
+            .then(() => {
+                btn.innerText = 'Order Placed!';
+                alert('Order successful!');
+                location.reload();
+            }, (err) => {
+                btn.innerText = 'Error';
+                alert('Error: ' + JSON.stringify(err));
+            });
+        });
+    </script>
+</body>
+</html>
